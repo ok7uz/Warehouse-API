@@ -1,6 +1,8 @@
 import os
-from dotenv import load_dotenv
 from pathlib import Path
+from datetime import timedelta
+from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
 
 
 load_dotenv()
@@ -10,7 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    'apps.user.apps.UserConfig',
+    'apps.product.apps.ProductConfig'
+]
 
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -20,20 +25,21 @@ THIRD_PARTY_APPS = [
 ]
 
 INSTALLED_APPS = [
+    *LOCAL_APPS,
+    *THIRD_PARTY_APPS,
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    *LOCAL_APPS,
-    *THIRD_PARTY_APPS,
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,9 +82,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGES = [
+    ('ru', _('Russian')),
+    ('en', _('English')),
+]
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'ru'
+
+TIME_ZONE = 'Asia/Tashkent'
 
 USE_I18N = True
 USE_TZ = True
@@ -89,7 +100,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -97,4 +113,13 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
 }
