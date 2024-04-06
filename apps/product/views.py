@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -36,7 +37,7 @@ class ProductView(APIView):
         tags=['Product']
     )
     def get(self, request, product_id):
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product, id=product_id)
         serializer = ProductSerializer(product)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -46,7 +47,7 @@ class ProductView(APIView):
         tags=['Product']
     )
     def put(self, request, product_id):
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product, id=product_id)
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -57,7 +58,7 @@ class ProductView(APIView):
         tags=['Product']
     )
     def delete(self, request, product_id):
-        product = Product.objects.get(id=product_id)
+        product = get_object_or_404(Product, id=product_id)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)  
         

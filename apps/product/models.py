@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from apps.user.models import User
+
 
 class Product(models.Model):
     name = models.CharField(_('name'), max_length=128)
@@ -9,7 +11,7 @@ class Product(models.Model):
     currency = models.CharField(_('currency'), max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')])
 
     purchasing_price = models.PositiveIntegerField(_('purchasing price'))
-    extra_charge = models.PositiveSmallIntegerField(_('extra charge'))
+    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'), default=0)
     selling_price = models.PositiveIntegerField(_('selling price'))
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
@@ -23,3 +25,18 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Purchase(models.Model):
+    supplier = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(_('quantity'))
+    date = models.DateField(_('created date'), auto_now_add=True)
+
+    class Meta:
+        db_table = 'purchase'
+        verbose_name = _('Purchase')
+        verbose_name_plural = _('Purchases')
+
+    def __str__(self):
+        pass

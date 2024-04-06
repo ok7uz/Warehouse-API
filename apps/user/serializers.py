@@ -1,6 +1,11 @@
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import update_last_login
+
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import PasswordField
 
 from apps.user.models import User
 
@@ -11,8 +16,24 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'image', 'first_name', 'last_name']
 
 
-class LoginSerializer(TokenObtainPairSerializer):
-    pass
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True)
+    password = PasswordField()
+    
+    def validate(self, attrs):
+        self.user = authenticate(**attrs)
+        if not self.user:
+            raise AuthenticationFailed()
+
+        data = {}
+        refresh = self.get_token(self.user)
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        update_last_login(None, self.user)
+        return data
+    
+    def get_token(self, user):
+        return RefreshToken.for_user(user)
 
 
 

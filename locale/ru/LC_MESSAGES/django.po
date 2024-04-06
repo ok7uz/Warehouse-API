@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-06 13:36+0500\n"
+"POT-Creation-Date: 2024-04-06 17:32+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,47 +23,39 @@ msgstr ""
 msgid "products"
 msgstr "товары"
 
-#: apps/product/models.py:6
+#: apps/product/models.py:8
 msgid "name"
 msgstr "название"
 
-#: apps/product/models.py:7
+#: apps/product/models.py:9
 msgid "barcode"
 msgstr "штрихкод"
 
-#: apps/product/models.py:8
+#: apps/product/models.py:10
 msgid "ID code"
 msgstr "ID код"
 
-#: apps/product/models.py:9
+#: apps/product/models.py:11
 msgid "currency"
 msgstr "валюта"
 
-#: apps/product/models.py:10
-msgid "UZS"
-msgstr "UZS"
-
-#: apps/product/models.py:11
-msgid "USD"
-msgstr "USD"
-
-#: apps/product/models.py:14
+#: apps/product/models.py:13
 msgid "purchasing price"
 msgstr "закупочная цена"
 
-#: apps/product/models.py:15
+#: apps/product/models.py:14
 msgid "extra charge"
 msgstr "Наценка"
 
-#: apps/product/models.py:16
+#: apps/product/models.py:15
 msgid "selling price"
 msgstr "цена продажи"
 
-#: apps/product/models.py:18
+#: apps/product/models.py:17
 msgid "created time"
 msgstr "созданное время"
 
-#: apps/product/models.py:19
+#: apps/product/models.py:18
 msgid "modified time"
 msgstr "измененное время"
 
@@ -71,33 +63,61 @@ msgstr "измененное время"
 msgid "product"
 msgstr "товар"
 
-#: apps/user/admin.py:8
+#: apps/product/models.py:33
+msgid "quantity"
+msgstr "количество"
+
+#: apps/product/models.py:34
+#, fuzzy
+#| msgid "created time"
+msgid "created date"
+msgstr "созданное время"
+
+#: apps/product/models.py:37
+msgid "Purchase"
+msgstr "Закуп"
+
+#: apps/product/models.py:38
+msgid "Purchases"
+msgstr "Закупы"
+
+#: apps/user/admin.py:9
 msgid "Adminsitration"
 msgstr "Администрация"
 
-#: apps/user/admin.py:9 apps/user/admin.py:10
+#: apps/user/admin.py:10 apps/user/admin.py:11
 msgid "Site adminsitration"
 msgstr "Администрация сайта"
 
-#: apps/user/admin.py:20
+#: apps/user/admin.py:21
 msgid "Extra informations"
 msgstr "Дополнительная информация"
 
-#: apps/user/admin.py:21
+#: apps/user/admin.py:22
 msgid "Permissions"
 msgstr "Разрешения"
 
-#: apps/user/apps.py:8 apps/user/models.py:12
+#: apps/user/apps.py:8 apps/user/models.py:14
 #, fuzzy
 #| msgid "Users"
 msgid "users"
 msgstr "Пользователи"
 
 #: apps/user/models.py:7
+msgid "first name"
+msgstr "имя"
+
+#: apps/user/models.py:8
+#, fuzzy
+#| msgid "name"
+msgid "last name"
+msgstr "название"
+
+#: apps/user/models.py:9
 msgid "image"
 msgstr "изображение"
 
-#: apps/user/models.py:11
+#: apps/user/models.py:13
 msgid "user"
 msgstr "пользователь"
 
@@ -108,3 +128,9 @@ msgstr "русский"
 #: config/settings/base.py:87
 msgid "English"
 msgstr "английский"
+
+#~ msgid "UZS"
+#~ msgstr "UZS"
+
+#~ msgid "USD"
+#~ msgstr "USD"
