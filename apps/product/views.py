@@ -15,8 +15,8 @@ class ProductListView(APIView):
     )
     def get(self, request):
         queryset = Product.objects.all()
-        serailizer = ProductSerializer(queryset, many=True)
-        return Response(serailizer.data, status=status.HTTP_200_OK)
+        serializer = ProductSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
         request_body=ProductSerializer(),
@@ -38,7 +38,7 @@ class ProductView(APIView):
     )
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
-        serializer = ProductSerializer(product)
+        serializer = ProductSerializer(product, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
