@@ -25,6 +25,27 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Inventory(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True)
+    quantity = models.IntegerField(_('quantity'), default=0)
+
+    purchasing_price = models.PositiveIntegerField(_('purchasing price'))
+    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'), default=0)
+    selling_price = models.PositiveIntegerField(_('selling price'))
+
+    created = models.DateTimeField(_('created time'), auto_now_add=True)
+    modified = models.DateTimeField(_('modified time'), auto_now=True)
+
+    class Meta:
+        db_table = 'inventory'
+        ordering = ['-modified']
+        verbose_name = _('inventory')
+        verbose_name_plural = _('inventories')
+
+    def __str__(self):
+        return self.product.name
 
 
 class Purchase(models.Model):
