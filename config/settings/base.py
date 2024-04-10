@@ -5,12 +5,10 @@ from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
 
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-
 
 LOCAL_APPS = [
     'apps.user.apps.UserConfig',
@@ -116,6 +114,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DATETIME_FORMAT': '%s',
 }
 
 
