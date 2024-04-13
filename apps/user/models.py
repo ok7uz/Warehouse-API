@@ -4,9 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
-    first_name = models.CharField(_("first name"), max_length=150, null=False, blank=False)
-    last_name = models.CharField(_("last name"), max_length=150, null=False, blank=False)
-    image = models.ImageField(_('image'), upload_to="user/")
+    first_name = models.CharField(max_length=150, null=False, blank=False, verbose_name=_("first name"))
+    last_name = models.CharField(max_length=150, null=False, blank=False, verbose_name=_("last name"))
+    image = models.ImageField(upload_to='user/', verbose_name=_('image'))
 
     class Meta:
         db_table = 'user'

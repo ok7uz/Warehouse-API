@@ -5,18 +5,18 @@ from apps.user.models import User
 
 
 class Product(models.Model):
-    name = models.CharField(_('name'), max_length=128)
-    barcode = models.PositiveIntegerField(_('barcode'))
-    id_code = models.PositiveIntegerField(_('ID code'))
-    currency = models.CharField(_('currency'), max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')])
+    name = models.CharField(max_length=128, verbose_name=_('name'))
+    barcode = models.PositiveIntegerField(verbose_name=_('barcode'))
+    id_code = models.PositiveIntegerField(verbose_name=_('ID code'))
+    currency = models.CharField(max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')], verbose_name=_('currency'))
 
-    purchasing_price = models.FloatField(_('purchasing price'))
-    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'))
-    selling_price = models.FloatField(_('selling price'))
-    wholesale_price = models.FloatField()
+    purchasing_price = models.FloatField(verbose_name=_('purchasing price'))
+    markup_percentage = models.PositiveSmallIntegerField(verbose_name=_('markup percentage'))
+    selling_price = models.FloatField(verbose_name=_('selling price'))
+    wholesale_price = models.FloatField(verbose_name=_('wholesale price'))
 
-    created = models.DateTimeField(_('created time'), auto_now_add=True)
-    modified = models.DateTimeField(_('modified time'), auto_now=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_('created time'))
+    modified = models.DateTimeField(auto_now=True, verbose_name=_('modified time'))
 
     class Meta:
         db_table = 'product'
