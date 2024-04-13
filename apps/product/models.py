@@ -10,9 +10,9 @@ class Product(models.Model):
     id_code = models.PositiveIntegerField(_('ID code'))
     currency = models.CharField(_('currency'), max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')])
 
-    purchasing_price = models.PositiveIntegerField(_('purchasing price'))
-    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'), default=0)
-    selling_price = models.PositiveIntegerField(_('selling price'))
+    purchasing_price = models.FloatField(_('purchasing price'))
+    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'))
+    selling_price = models.FloatField(_('selling price'))
     wholesale_price = models.FloatField()
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)

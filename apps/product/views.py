@@ -2,19 +2,27 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
+from apps.product.filters import ProductFilter
 from apps.product.models import Inventory, Product
 from apps.product.serialzers import InventorySerializer, ProductSerializer
 
 
 class ProductListView(APIView):
+
     @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('currency', openapi.IN_QUERY, type=openapi.TYPE_STRING)
+        ],
         responses={200: ProductSerializer(many=True)},
-        tags=['Product']
+        tags=['Product'],
     )
     def get(self, request):
-        queryset = Product.objects.all()
+        products = Product.objects.all()
+        filter = ProductFilter(request.GET, queryset=products)
+        queryset = filter.qs if filter.is_valid() else products.none()
         serializer = ProductSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

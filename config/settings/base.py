@@ -19,7 +19,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_yasg',
     'corsheaders',
-    'import_export',
+    'django_filters',
 ]
 
 INSTALLED_APPS = [
@@ -138,3 +138,5 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.127.0.0.1']
