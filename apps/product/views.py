@@ -25,6 +25,7 @@ class ProductListView(APIView):
     )
     def post(self, request, format=None):
         serializer = ProductSerializer(data=request.data)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -49,6 +50,7 @@ class ProductView(APIView):
     def put(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         serializer = ProductSerializer(product, data=request.data)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -80,6 +82,7 @@ class InventoryListView(APIView):
     )
     def post(self, request, format=None):
         serializer = InventorySerializer(data=request.data)
+
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -104,6 +107,7 @@ class InventoryView(APIView):
     def put(self, request, inventory_id):
         inventory = get_object_or_404(Inventory, id=inventory_id)
         serializer = InventorySerializer(inventory, data=request.data)
+        
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
