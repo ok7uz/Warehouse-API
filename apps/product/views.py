@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -11,28 +12,24 @@ from apps.product.serialzers import InventorySerializer, ProductSerializer
 
 
 class ProductListView(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ProductSerializer
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter('currency', openapi.IN_QUERY, type=openapi.TYPE_STRING)
-        ],
-        responses={200: ProductSerializer(many=True)},
-        tags=['Product'],
-    )
+    @swagger_auto_schema(manual_parameters=[openapi.Parameter('currency', openapi.IN_QUERY, type=openapi.TYPE_STRING)],
+                         responses={200: serializer_class(many=True)},
+                         tags=['Product'])
     def get(self, request):
         products = Product.objects.all()
         filter = ProductFilter(request.GET, queryset=products)
         queryset = filter.qs if filter.is_valid() else products.none()
-        serializer = ProductSerializer(queryset, context={'request': request}, many=True)
+        serializer = self.serializer_class(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @swagger_auto_schema(
-        request_body=ProductSerializer(),
-        responses={200: ProductSerializer()},
-        tags=['Product']
-    )
+    @swagger_auto_schema(request_body=serializer_class(),
+                         responses={200: serializer_class()},
+                         tags=['Product'])
     def post(self, request, format=None):
-        serializer = ProductSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -41,32 +38,29 @@ class ProductListView(APIView):
     
 
 class ProductView(APIView):
-    @swagger_auto_schema(
-        responses={200: ProductSerializer()},
-        tags=['Product']
-    )
+    permission_classes = (AllowAny,)
+    serializer_class = ProductSerializer
+
+    @swagger_auto_schema(responses={200: serializer_class()},
+                         tags=['Product'])
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
-        serializer = ProductSerializer(product, context={'request': request})
+        serializer = self.serializer_class(product, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @swagger_auto_schema(
-        request_body=ProductSerializer(),
-        responses={200: ProductSerializer()},
-        tags=['Product']
-    )
+    @swagger_auto_schema(request_body=serializer_class(),
+                         responses={200: serializer_class()},
+                         tags=['Product'])
     def put(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
-        serializer = ProductSerializer(product, data=request.data)
+        serializer = self.serializer_class(product, data=request.data)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @swagger_auto_schema(
-        tags=['Product']
-    )
+    @swagger_auto_schema(tags=['Product'])
     def delete(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         product.delete()

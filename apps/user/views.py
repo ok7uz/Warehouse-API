@@ -24,7 +24,7 @@ class UserListView(APIView):
 
 
 class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     @swagger_auto_schema(
         responses={200: UserSerializer()},
@@ -36,14 +36,12 @@ class ProfileView(APIView):
 
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
-    @swagger_auto_schema(
-        tags=['Auth'],
-        request_body=LoginSerializer(),
-        responses={201: 'Tokens'}
-    )
+    @swagger_auto_schema(tags=['Auth'],
+                         request_body=LoginSerializer(),
+                         responses={201: 'Tokens'})
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         try:
@@ -54,17 +52,16 @@ class LoginView(APIView):
 
 
 class RegisterView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
+    serializer_class = RegisterSerializer
 
-    @swagger_auto_schema(
-        tags=['Auth'],
-        request_body=RegisterSerializer(),
-        responses={200: UserSerializer()}
-    )
+    @swagger_auto_schema(tags=['Auth'],
+                         request_body=serializer_class(),
+                         responses={200: UserSerializer()})
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data, context={'request': request})
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=201)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
