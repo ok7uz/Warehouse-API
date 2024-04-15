@@ -6,32 +6,19 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
-from apps.user.models import User
 from apps.user.serializers import UserSerializer, RegisterSerializer, LoginSerializer
-
-
-class UserListView(APIView):
-    permission_classes = [AllowAny]
-
-    @swagger_auto_schema(
-        responses={200: UserSerializer(many=True)},
-        tags=['User']
-    )
-    def get(self, request):
-        queryset = User.objects.all()
-        serializer = UserSerializer(queryset, context={'request': request}, many=True)
-        return Response(serializer.data, status=200)
 
 
 class ProfileView(APIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
 
     @swagger_auto_schema(
-        responses={200: UserSerializer()},
-        tags=['User']
+        responses={200: serializer_class},
+        tags=['Auth']
     )
     def get(self, request):
-        serializer = UserSerializer(request.user, context={'request': request})
+        serializer = self.serializer_class(request.user, context={'request': request})
         return Response(serializer.data, status=200)
 
 

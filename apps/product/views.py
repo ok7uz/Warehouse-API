@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from apps.product.filters import ProductFilter
 from apps.product.models import Inventory, Product
-from apps.product.serialzers import InventorySerializer, ProductSerializer
+from apps.product.serializers import InventorySerializer, ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
