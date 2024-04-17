@@ -6,6 +6,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from apps.product.filters import ProductFilter
 from apps.product.models import WarehouseProduct, Product
@@ -19,11 +21,11 @@ class ProductListView(APIView, PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter('page', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
-            openapi.Parameter('page_size', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
-            openapi.Parameter('currency', openapi.IN_QUERY, type=openapi.TYPE_STRING)
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('page', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
+            OpenApiParameter('page_size', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
+            OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR)
         ],
         responses={200: serializer_class},
         tags=['Product']
@@ -36,18 +38,18 @@ class ProductListView(APIView, PageNumberPagination):
         serializer = self.serializer_class(page, context={'request': request}, many=True)
         return self.get_paginated_response(serializer.data)
     
-    # @swagger_auto_schema(
-    #     request_body=serializer_class,
-    #     responses={200: serializer_class},
-    #     tags=['Product']
-    # )
-    # def post(self, request, format=None):
-    #     serializer = self.serializer_class(data=request.data)
-    #
-    #     if serializer.is_valid(raise_exception=True):
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @extend_schema(
+        request=serializer_class,
+        responses={200: serializer_class},
+        tags=['Product']
+    )
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+    
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_paginated_response(self, data):
 
@@ -63,14 +65,14 @@ class ProductView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
 
-    @swagger_auto_schema(responses={200: serializer_class},
+    @extend_schema(responses={200: serializer_class},
                          tags=['Product'])
     def get(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         serializer = self.serializer_class(product, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @swagger_auto_schema(request_body=serializer_class,
+    @extend_schema(request=serializer_class,
                          responses={200: serializer_class},
                          tags=['Product'])
     def put(self, request, product_id):
@@ -82,7 +84,7 @@ class ProductView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @swagger_auto_schema(tags=['Product'])
+    @extend_schema(tags=['Product'])
     def delete(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
         product.delete()
@@ -90,7 +92,7 @@ class ProductView(APIView):
 
 
 class WarehouseProductListView(APIView):
-    @swagger_auto_schema(
+    @extend_schema(
         responses={200: WarehouseProductSerializer(many=True)},
         tags=['Warehouse Product']
     )
@@ -99,9 +101,9 @@ class WarehouseProductListView(APIView):
         serializer = WarehouseProductSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @swagger_auto_schema(
-        request_body=WarehouseProductSerializer(),
-        responses={200: WarehouseProductSerializer()},
+    @extend_schema(
+        request=WarehouseProductSerializer,
+        responses={200: WarehouseProductSerializer},
         tags=['Warehouse Product']
     )
     def post(self, request, format=None):

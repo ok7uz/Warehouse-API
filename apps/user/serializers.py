@@ -18,7 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(write_only=True)
-    password = PasswordField()
+    password = PasswordField(write_only=True)
+    access = serializers.UUIDField(read_only=True)
+    refresh = serializers.UUIDField(read_only=True)
     
     def validate(self, attrs):
         self.user = authenticate(**attrs)

@@ -1,4 +1,4 @@
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -13,7 +13,7 @@ class ProfileView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
 
-    @swagger_auto_schema(
+    @extend_schema(
         responses={200: serializer_class},
         tags=['Auth']
     )
@@ -26,9 +26,9 @@ class LoginView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
-    @swagger_auto_schema(tags=['Auth'],
-                         request_body=LoginSerializer(),
-                         responses={201: 'Tokens'})
+    @extend_schema(tags=['Auth'],
+                         request=serializer_class,
+                         responses={201: serializer_class})
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         try:
@@ -42,8 +42,8 @@ class RegisterView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
 
-    @swagger_auto_schema(tags=['Auth'],
-                         request_body=serializer_class(),
+    @extend_schema(tags=['Auth'],
+                         request=serializer_class(),
                          responses={200: UserSerializer()})
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})

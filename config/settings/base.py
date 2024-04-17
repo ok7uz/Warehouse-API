@@ -17,7 +17,7 @@ LOCAL_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
-    'drf_yasg',
+    'drf_spectacular',
     'corsheaders',
     'django_filters',
 ]
@@ -114,6 +114,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DATETIME_FORMAT': '%s',
 }
 
@@ -137,6 +138,14 @@ SWAGGER_SETTINGS = {
             'in': 'header'
       }
    }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Warehouse API',
+    'DESCRIPTION': '...',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.127.0.0.1']
