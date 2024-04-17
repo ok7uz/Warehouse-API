@@ -28,37 +28,21 @@ class Product(models.Model):
         return self.name
     
 
-class Inventory(models.Model):
+class WarehouseProduct(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, primary_key=True)
-    quantity = models.IntegerField(_('quantity'), default=0)
+    quantity = models.IntegerField(_('quantity'), default=0, blank=False)
 
-    purchasing_price = models.PositiveIntegerField(_('purchasing price'))
-    markup_percentage = models.PositiveSmallIntegerField(_('extra charge'), default=0)
-    selling_price = models.PositiveIntegerField(_('selling price'))
+    purchasing_amount = models.PositiveIntegerField(_('purchasing amount'))
+    selling_amount = models.PositiveIntegerField(_('selling amount'))
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
     modified = models.DateTimeField(_('modified time'), auto_now=True)
 
     class Meta:
-        db_table = 'inventory'
+        db_table = 'warehouse_product'
         ordering = ['-modified']
-        verbose_name = _('inventory')
-        verbose_name_plural = _('inventories')
+        verbose_name = _('warehouse product')
+        verbose_name_plural = _('warehouse products')
 
     def __str__(self):
         return self.product.name
-
-
-class Purchase(models.Model):
-    supplier = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(_('quantity'))
-    date = models.DateField(_('created date'), auto_now_add=True)
-
-    class Meta:
-        db_table = 'purchase'
-        verbose_name = _('Purchase')
-        verbose_name_plural = _('Purchases')
-
-    def __str__(self):
-        pass

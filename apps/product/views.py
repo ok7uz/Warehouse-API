@@ -8,8 +8,8 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from apps.product.filters import ProductFilter
-from apps.product.models import Inventory, Product
-from apps.product.serializers import InventorySerializer, ProductSerializer
+from apps.product.models import WarehouseProduct, Product
+from apps.product.serializers import WarehouseProductSerializer, ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
@@ -36,18 +36,18 @@ class ProductListView(APIView, PageNumberPagination):
         serializer = self.serializer_class(page, context={'request': request}, many=True)
         return self.get_paginated_response(serializer.data)
     
-    @swagger_auto_schema(
-        request_body=serializer_class,
-        responses={200: serializer_class},
-        tags=['Product']
-    )
-    def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # @swagger_auto_schema(
+    #     request_body=serializer_class,
+    #     responses={200: serializer_class},
+    #     tags=['Product']
+    # )
+    # def post(self, request, format=None):
+    #     serializer = self.serializer_class(data=request.data)
+    #
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_paginated_response(self, data):
 
@@ -89,58 +89,25 @@ class ProductView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)  
 
 
-class InventoryListView(APIView):
+class WarehouseProductListView(APIView):
     @swagger_auto_schema(
-        responses={200: InventorySerializer(many=True)},
-        tags=['Inventory']
+        responses={200: WarehouseProductSerializer(many=True)},
+        tags=['Warehouse Product']
     )
     def get(self, request):
-        queryset = Inventory.objects.all()
-        serializer = InventorySerializer(queryset, context={'request': request}, many=True)
+        queryset = WarehouseProduct.objects.all()
+        serializer = WarehouseProductSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(
-        request_body=InventorySerializer(),
-        responses={200: InventorySerializer()},
-        tags=['Inventory']
+        request_body=WarehouseProductSerializer(),
+        responses={200: WarehouseProductSerializer()},
+        tags=['Warehouse Product']
     )
     def post(self, request, format=None):
-        serializer = InventorySerializer(data=request.data)
+        serializer = WarehouseProductSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-class InventoryView(APIView):
-    @swagger_auto_schema(
-        responses={200: InventorySerializer()},
-        tags=['Inventory']
-    )
-    def get(self, request, inventory_id):
-        inventory = get_object_or_404(Inventory, id=inventory_id)
-        serializer = InventorySerializer(inventory, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    @swagger_auto_schema(
-        request_body=InventorySerializer(),
-        responses={200: InventorySerializer()},
-        tags=['Inventory']
-    )
-    def put(self, request, inventory_id):
-        inventory = get_object_or_404(Inventory, id=inventory_id)
-        serializer = InventorySerializer(inventory, data=request.data)
-        
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @swagger_auto_schema(
-        tags=['Inventory']
-    )
-    def delete(self, request, inventory_id):
-        inventory = get_object_or_404(Inventory, id=inventory_id)
-        inventory.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  

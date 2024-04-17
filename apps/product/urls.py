@@ -1,14 +1,17 @@
-from django.urls import path
+from django.urls import path, include
 
-from apps.product.views import ProductListView, ProductView, InventoryListView, InventoryView
+from apps.product.views import ProductListView, ProductView, WarehouseProductListView
 
 
 app_name = 'product'
 
 urlpatterns = [
-    path('', ProductListView.as_view(), name='products'),
-    path('<int:product_id>/', ProductView.as_view(), name='product-detail'),
-
-    path('', InventoryListView.as_view(), name='inventories'),
-    path('<int:inventory_id>/', InventoryView.as_view(), name='inventory-detail'),
+    path('products/', include([
+        path('', ProductListView.as_view(), name='products'),
+        path('<int:product_id>/', ProductView.as_view(), name='product-detail'),
+    ])),
+    path('warehouse/', include([
+        path('', WarehouseProductListView.as_view(), name='warehouse-products'),
+        # path('<int:inventory_id>/', InventoryView.as_view(), name='inventory-detail'),
+    ]))
 ]
