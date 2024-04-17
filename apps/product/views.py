@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Q 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,8 +10,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from apps.product.filters import ProductFilter
-from apps.product.models import WarehouseProduct, Product
-from apps.product.serializers import WarehouseProductSerializer, ProductSerializer
+from apps.product.models import Provider, WarehouseProduct, Product
+from apps.product.serializers import ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
@@ -24,6 +25,7 @@ class ProductListView(APIView, PageNumberPagination):
         parameters=[
             OpenApiParameter('page', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
             OpenApiParameter('page_size', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
+            OpenApiParameter('search', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR, description='via name, barcode'),
             OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR)
         ],
         responses={200: serializer_class(many=True)},
@@ -31,6 +33,9 @@ class ProductListView(APIView, PageNumberPagination):
     )
     def get(self, request):
         products = Product.objects.all()
+        search = request.query_params.get('search', None)
+        products = products.filter(Q(name__icontains=search) | Q(barcode__icontains=search)) if search else products
+
         filter = ProductFilter(request.GET, queryset=products)
         queryset = filter.qs if filter.is_valid() else products.none()
         page = self.paginate_queryset(queryset, request)
@@ -112,3 +117,31 @@ class WarehouseProductListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProviderListView(APIView):
+    @extend_schema(
+        responses={200: ProviderSerializer(many=True)},
+        tags=['Provider']
+    )
+    def get(self, request):
+        queryset = Provider.objects.all()
+        serializer = ProviderSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class PurchaseListView(APIView):
+
+    @extend_schema(
+        request=PurchaseSerializer,
+        responses={200: PurchaseSerializer},
+        tags=['Purchase']
+    )
+    def post(self, request, format=None):
+        serializer = PurchaseSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

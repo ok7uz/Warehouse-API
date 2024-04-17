@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.product.models import Product, WarehouseProduct
+from apps.product.models import Product, Provider, WarehouseProduct
 
 
 @admin.register(Product)
@@ -17,3 +17,6 @@ class WarehouseProductAdmin(admin.ModelAdmin):
     readonly_fields = ['created', 'modified']
     search_fields = ['product']
     ordering = ['-quantity']
+
+
+admin.site.register(Provider)
