@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apps.user.models import User
-
 
 class Product(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))

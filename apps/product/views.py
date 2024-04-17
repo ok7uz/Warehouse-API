@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
@@ -27,7 +26,7 @@ class ProductListView(APIView, PageNumberPagination):
             OpenApiParameter('page_size', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
             OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR)
         ],
-        responses={200: serializer_class},
+        responses={200: serializer_class(many=True)},
         tags=['Product']
     )
     def get(self, request):

@@ -11,7 +11,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class WarehouseProductSerializer(serializers.ModelSerializer):
-    # product = ProductSerializer()
     product_id = serializers.IntegerField(source='product.id', write_only=True)
     product = ProductSerializer(read_only=True)
     quantity = serializers.IntegerField(required=True)
@@ -21,6 +20,13 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = WarehouseProduct
         fields = ['product_id', 'product', 'quantity', 'purchasing_amount', 'selling_amount', 'created', 'modified']
+
+    def validate(self, attrs):
+        product_id = attrs['product']['id']
+        warehouse_product = WarehouseProduct.objects.filter(product__id=product_id)
+        if warehouse_product.exists():
+            raise serializers.ValidationError({'product_id': 'there is a warehouse product with this product_id'})
+        return super().validate(attrs)
 
     def create(self, validated_data):
         product = get_object_or_404(Product, id=validated_data['product']['id'])

@@ -12,6 +12,5 @@ urlpatterns = [
     ])),
     path('warehouse/', include([
         path('', WarehouseProductListView.as_view(), name='warehouse-products'),
-        # path('<int:inventory_id>/', InventoryView.as_view(), name='inventory-detail'),
     ]))
 ]
