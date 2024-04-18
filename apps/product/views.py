@@ -114,7 +114,7 @@ class WarehouseProductListView(APIView, PageNumberPagination):
     def get(self, request):
         products = WarehouseProduct.objects.all()
         search = request.query_params.get('search', None)
-        products = products.filter(Q(name__icontains=search) | Q(barcode__icontains=search)) if search else products
+        products = products.filter(Q(product__name__icontains=search) | Q(product__barcode__icontains=search)) if search else products
 
         filter = WarehouseProductFilter(request.GET, queryset=products)
         queryset = filter.qs if filter.is_valid() else products.none()
