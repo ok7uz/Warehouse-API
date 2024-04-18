@@ -1,8 +1,8 @@
 from apps.product.models import Product, WarehouseProduct
-from django_filters.rest_framework import FilterSet
+import django_filters.rest_framework as filters
 
 
-class ProductFilter(FilterSet):
+class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = {
@@ -11,9 +11,15 @@ class ProductFilter(FilterSet):
         }
 
 
-class WarehouseProductFilter(FilterSet):
+class WarehouseProductFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='product__name', lookup_expr='icontains')
+    barcode = filters.NumberFilter(field_name='product__barcode', lookup_expr='icontains')
+
     class Meta:
         model = WarehouseProduct
         fields = {
             'product__currency': ['exact'], 
+            # 'name': ['icontains'],
+            # 'barcode': ['icontains'],
         }
+
