@@ -49,7 +49,7 @@ class WarehouseProduct(models.Model):
 
 
 class Provider(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
 
 
 class Purchase(models.Model):

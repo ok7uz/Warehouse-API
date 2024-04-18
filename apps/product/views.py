@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
-from apps.product.filters import ProductFilter
+from apps.product.filters import ProductFilter, WarehouseProductFilter
 from apps.product.models import Provider, WarehouseProduct, Product
 from apps.product.serializers import ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
 
@@ -95,15 +95,32 @@ class ProductView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)  
 
 
-class WarehouseProductListView(APIView):
+class WarehouseProductListView(APIView, PageNumberPagination):
+    serializer_class = WarehouseProductSerializer
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
     @extend_schema(
+        parameters=[
+            OpenApiParameter('page', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
+            OpenApiParameter('page_size', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
+            OpenApiParameter('search', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR, description='via name, barcode'),
+            OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR)
+        ],
         responses={200: WarehouseProductSerializer(many=True)},
         tags=['Warehouse Product']
     )
     def get(self, request):
-        queryset = WarehouseProduct.objects.all()
-        serializer = WarehouseProductSerializer(queryset, context={'request': request}, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        products = WarehouseProduct.objects.all()
+        search = request.query_params.get('search', None)
+        products = products.filter(Q(name__icontains=search) | Q(barcode__icontains=search)) if search else products
+
+        filter = WarehouseProductFilter(request.GET, queryset=products)
+        queryset = filter.qs if filter.is_valid() else products.none()
+        page = self.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(page, context={'request': request}, many=True)
+        return self.get_paginated_response(serializer.data)
     
     @extend_schema(
         request=WarehouseProductSerializer,
@@ -117,7 +134,16 @@ class WarehouseProductListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get_paginated_response(self, data):
 
+        return Response({
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'count': self.page.paginator.count,
+            'data': data,
+        })
+    
 
 class ProviderListView(APIView):
     @extend_schema(
@@ -128,6 +154,19 @@ class ProviderListView(APIView):
         queryset = Provider.objects.all()
         serializer = ProviderSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        request=ProviderSerializer,
+        responses={200: ProviderSerializer},
+        tags=['Provider']
+    )
+    def post(self, request):
+        serializer = ProviderSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class PurchaseListView(APIView):

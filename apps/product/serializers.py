@@ -44,7 +44,6 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
     
 
 class ProviderSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Provider
