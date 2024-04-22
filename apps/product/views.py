@@ -10,8 +10,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from apps.product.filters import ProductFilter, ProviderFilter, WarehouseProductFilter
-from apps.product.models import Provider, WarehouseProduct, Product
-from apps.product.serializers import ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
+from apps.product.models import Provider, Purchase, WarehouseProduct, Product
+from apps.product.serializers import ConsignmentSerializer, ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
@@ -177,6 +177,18 @@ class ProviderListView(APIView):
     
 
 class PurchaseListView(APIView):
+
+    @extend_schema(
+        # parameters=[
+        #     OpenApiParameter('search', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR, description='searching ...'),
+        # ],
+        responses={200: ConsignmentSerializer(many=True)},
+        tags=['Purchase']
+    )
+    def get(self, request):
+        queryset = Purchase.objects.all()
+        serializer = ConsignmentSerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         request=PurchaseSerializer,

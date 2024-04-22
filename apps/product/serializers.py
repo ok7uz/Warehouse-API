@@ -101,4 +101,11 @@ class PurchaseSerializer(serializers.ModelSerializer):
             purchase_product.is_valid(raise_exception=True)
             purchase_product.save()
 
-        return purchase        
+        return purchase 
+
+class ConsignmentSerializer(serializers.ModelSerializer):
+    provider = serializers.CharField(source='provider.name', read_only=True)
+
+    class Meta:
+        model = Purchase
+        fields = ('created', 'provider', 'total', 'paid', 'left', 'comment')       
