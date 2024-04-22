@@ -1,4 +1,4 @@
-from apps.product.models import Product, WarehouseProduct
+from apps.product.models import Product, Provider, WarehouseProduct
 import django_filters.rest_framework as filters
 
 
@@ -19,7 +19,12 @@ class WarehouseProductFilter(filters.FilterSet):
         model = WarehouseProduct
         fields = {
             'product__currency': ['exact'], 
-            # 'name': ['icontains'],
-            # 'barcode': ['icontains'],
         }
 
+
+class ProviderFilter(filters.FilterSet):
+    search = filters.CharFilter(field_name='name', lookup_expr='icontains')
+
+    class Meta:
+        model = Provider
+        fields = ('search',)

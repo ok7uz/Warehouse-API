@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
-from apps.product.filters import ProductFilter, WarehouseProductFilter
+from apps.product.filters import ProductFilter, ProviderFilter, WarehouseProductFilter
 from apps.product.models import Provider, WarehouseProduct, Product
 from apps.product.serializers import ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
 
@@ -149,11 +149,16 @@ class WarehouseProductListView(APIView, PageNumberPagination):
 
 class ProviderListView(APIView):
     @extend_schema(
+        parameters=[
+            OpenApiParameter('search', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR, description='searching ...'),
+        ],
         responses={200: ProviderSerializer(many=True)},
         tags=['Provider']
     )
     def get(self, request):
-        queryset = Provider.objects.all()
+        providers = Provider.objects.all()
+        filter = ProviderFilter(request.GET, queryset=providers)
+        queryset = filter.qs if filter.is_valid() else providers.none()
         serializer = ProviderSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

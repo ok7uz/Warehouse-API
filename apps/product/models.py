@@ -50,6 +50,8 @@ class WarehouseProduct(models.Model):
 
 class Provider(models.Model):
     name = models.CharField(max_length=128)
+    inn = models.PositiveIntegerField()
+    contract_number = models.PositiveIntegerField()
 
 
 class Purchase(models.Model):
