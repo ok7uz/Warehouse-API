@@ -69,6 +69,10 @@ class Purchase(models.Model):
         verbose_name = _('purchase product')
         verbose_name_plural = _('purchase products')
 
+    def save(self, *args, **kwargs):
+        self.left = self.total - self.paid
+        return super().save(*args, **kwargs)
+
     def __str__(self):
         return self.provider.user.first_name
 
@@ -93,3 +97,9 @@ class PurchaseProduct(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class Payment(models.Model):
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
+    type = models.CharField(max_length=10, choices=(('card', 'card'), ('cash', 'cash')))
+    amount = models.FloatField()

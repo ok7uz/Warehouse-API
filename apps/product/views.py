@@ -11,7 +11,7 @@ from drf_spectacular.types import OpenApiTypes
 
 from apps.product.filters import ProductFilter, ProviderFilter, WarehouseProductFilter
 from apps.product.models import Provider, Purchase, WarehouseProduct, Product
-from apps.product.serializers import ConsignmentSerializer, ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
+from apps.product.serializers import ConsignmentSerializer, PaymentSerializer, ProviderSerializer, PurchaseSerializer, WarehouseProductSerializer, ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
@@ -197,6 +197,22 @@ class PurchaseListView(APIView):
     )
     def post(self, request, format=None):
         serializer = PurchaseSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class PaymentListView(APIView):
+
+    @extend_schema(
+        request=PaymentSerializer,
+        responses={201: PaymentSerializer},
+        tags=['Purchase'],
+    )
+    def post(self, request, format=None):
+        serializer = PaymentSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()

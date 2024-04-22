@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from apps.product.models import Provider, Purchase, PurchaseProduct, WarehouseProduct, Product
+from apps.product.models import Payment, Provider, Purchase, PurchaseProduct, WarehouseProduct, Product
 from apps.user.serializers import UserSerializer
 
 
@@ -108,4 +108,20 @@ class ConsignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ('created', 'provider', 'total', 'paid', 'left', 'comment')       
+        fields = ('id', 'created', 'provider', 'total', 'paid', 'left', 'comment')       
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    purchase_id = serializers.IntegerField(source='purchase.id')
+
+    class Meta:
+        model = Payment
+        fields = ('id', 'purchase_id', 'type', 'amount')    
+
+    def create(self, validated_data):
+        purchase = get_object_or_404(Purchase, id=validated_data.pop('purchase')['id'])
+        validated_data['purchase'] = purchase
+        purchase.paid += validated_data['amount']
+        purchase.save()
+
+        return super().create(validated_data)   
