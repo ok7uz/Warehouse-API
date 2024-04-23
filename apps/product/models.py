@@ -110,4 +110,4 @@ class Payment(models.Model):
     amount = models.FloatField()
 
     def __str__(self):
-        return f'{self.purchase}: {self.amonut}'
+        return f'{self.purchase}: {self.amount}'
