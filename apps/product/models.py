@@ -54,6 +54,9 @@ class Provider(models.Model):
     inn = models.PositiveIntegerField()
     contract_number = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.name
+
 
 class Purchase(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
@@ -105,3 +108,6 @@ class Payment(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, choices=(('card', 'card'), ('cash', 'cash')))
     amount = models.FloatField()
+
+    def __str__(self):
+        return f'{self.purchase}: {self.amonut}'

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.product.models import Product, Provider, WarehouseProduct, Purchase
+from apps.product.models import Product, Provider, WarehouseProduct, Purchase, PurchaseProduct, Payment
 
 
 @admin.register(Product)
@@ -20,3 +20,6 @@ class WarehouseProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Provider)
+admin.site.register(Purchase)
+admin.site.register(PurchaseProduct)
+admin.site.register(Payment)
