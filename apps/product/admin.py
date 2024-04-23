@@ -16,10 +16,35 @@ class WarehouseProductAdmin(admin.ModelAdmin):
     list_display = ['product', 'quantity', 'purchasing_amount', 'selling_amount']
     readonly_fields = ['created', 'modified']
     search_fields = ['product']
-    ordering = ['-quantity']
+    ordering = ['product']
 
 
-admin.site.register(Provider)
-admin.site.register(Purchase)
-admin.site.register(PurchaseProduct)
-admin.site.register(Payment)
+@admin.register(Purchase)
+class PurchaseAdmin(admin.ModelAdmin):
+    list_display = ['provider', 'total', 'paid', 'left', 'created']
+    search_fields = ['provider']
+    ordering = ['-created']
+
+
+@admin.register(PurchaseProduct)
+class PurchaseProductAdmin(admin.ModelAdmin):
+    list_display = ['product', 'purchase', 'quantity', 'created']
+    readonly_fields = ['created', 'modified']
+    search_fields = ['product']
+    ordering = ['-created']
+
+
+@admin.register(Provider)
+class ProviderAdmin(admin.ModelAdmin):
+    list_display = ['name', 'inn', 'contract_number']
+    search_fields = ['name', 'inn']
+    ordering = ['name']
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ['purchase', 'type', 'amount', 'created']
+    search_fields = ['purchase']
+    list_filter = ['type']
+    ordering = ['-created']
+
