@@ -31,6 +31,7 @@ class Product(models.Model):
 class WarehouseProduct(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(_('quantity'), default=0, blank=False)
+    provider = models.ForeignKey('Provider', on_delete=models.CASCADE)
 
     purchasing_amount = models.PositiveIntegerField(_('purchasing amount'))
     selling_amount = models.PositiveIntegerField(_('selling amount'))
@@ -57,6 +58,7 @@ class Provider(models.Model):
 class Purchase(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     created = models.CharField(max_length=256, verbose_name=_('created time'))
+    time = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=256, null=True)
 
     total = models.FloatField()

@@ -11,16 +11,24 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ProviderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Provider
+        fields = '__all__'
+
+
 class WarehouseProductSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id', write_only=True)
     product = ProductSerializer(read_only=True)
+    provider = ProviderSerializer(read_only=True)
     quantity = serializers.IntegerField(required=True)
     purchasing_amount = serializers.FloatField(read_only=True)
     selling_amount = serializers.FloatField(read_only=True)
 
     class Meta:
         model = WarehouseProduct
-        fields = ['product_id', 'product', 'quantity', 'purchasing_amount', 'selling_amount', 'created', 'modified']
+        fields = ['product_id', 'product', 'quantity', 'provider', 'purchasing_amount', 'selling_amount', 'created', 'modified']
 
     def validate(self, attrs):
         product_id = attrs['product']['id']
@@ -41,13 +49,6 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
             purchasing_amount=purchasing_amount,
             selling_amount=selling_amount
         )
-    
-
-class ProviderSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Provider
-        fields = '__all__'
 
 
 class PurchaseProductSerializer(serializers.ModelSerializer):
@@ -61,10 +62,16 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         product = get_object_or_404(Product, id=validated_data.pop('product')['id'])
-        quantity = validated_data.pop('quantity', None)
-        purchase = self.context['purchase']    
+        quantity = validated_data.pop('quantity', None)   
+        purchase = self.context['purchase']
+        provider_id = purchase.provider_id
 
-        warehouse_product, created = WarehouseProduct.objects.get_or_create(product=product)
+        warehouse_product = WarehouseProduct.objects.filter(product=product, provider_id=provider_id)
+        if not warehouse_product.exists():
+            warehouse_product = WarehouseProduct(product=product, provider_id=provider_id, quantity=0)
+        else:
+            warehouse_product = warehouse_product.first()
+
         warehouse_product.quantity += quantity
         warehouse_product.purchasing_amount = warehouse_product.product.purchasing_price * warehouse_product.quantity
         warehouse_product.selling_amount = warehouse_product.product.selling_price * warehouse_product.quantity
