@@ -79,7 +79,7 @@ class Purchase(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.provider.user.first_name
+        return self.provider.name
 
 
 class PurchaseProduct(models.Model):
