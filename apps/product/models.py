@@ -56,7 +56,7 @@ class Provider(models.Model):
 
 class Purchase(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-    created = models.DateTimeField(_('created time'))
+    created = models.CharField(max_length=256, verbose_name=_('created time'))
     comment = models.CharField(max_length=256, null=True)
 
     total = models.FloatField()
