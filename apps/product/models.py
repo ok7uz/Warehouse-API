@@ -9,9 +9,9 @@ class Product(models.Model):
     currency = models.CharField(max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')], verbose_name=_('currency'))
 
     purchasing_price = models.FloatField(verbose_name=_('purchasing price'))
-    markup_percentage = models.PositiveSmallIntegerField(verbose_name=_('markup percentage'))
+    markup_percentage = models.FloatField(verbose_name=_('markup percentage'))
     selling_price = models.FloatField(verbose_name=_('selling price'))
-    wholesale_price = models.FloatField(verbose_name=_('wholesale price'))
+    wholesale_price = models.FloatField(verbose_name=_('wholesale price'), null=True, blank=True)
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('created time'))
     modified = models.DateTimeField(auto_now=True, verbose_name=_('modified time'))
