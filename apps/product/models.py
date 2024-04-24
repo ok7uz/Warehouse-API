@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apps.user.models import User
-
 
 class Product(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))
@@ -63,6 +61,7 @@ class Purchase(models.Model):
     created = models.CharField(max_length=256, verbose_name=_('created time'))
     time = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=256, null=True)
+    invoice_number = models.PositiveIntegerField(max_length=256, null=True)
 
     total = models.FloatField()
     paid = models.FloatField(default=0)

@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from apps.product.models import Payment, Provider, Purchase, PurchaseProduct, WarehouseProduct, Product
-from apps.user.serializers import UserSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -28,7 +27,8 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WarehouseProduct
-        fields = ['product_id', 'product', 'quantity', 'provider', 'purchasing_amount', 'selling_amount', 'created', 'modified']
+        fields = ['product_id', 'product', 'quantity', 'provider', 'purchasing_amount',
+                  'selling_amount', 'created', 'modified']
 
     def validate(self, attrs):
         product_id = attrs['product']['id']
@@ -92,7 +92,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ['id', 'products', 'provider_id', 'provider', 'total', 'created']
+        fields = ['id', 'products', 'provider_id', 'provider', 'invoice_number', 'total', 'created']
 
     def create(self, validated_data):
         products = validated_data.pop('products', None)
@@ -109,6 +109,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             purchase_product.save()
 
         return purchase 
+
 
 class ConsignmentSerializer(serializers.ModelSerializer):
     provider = serializers.CharField(source='provider.name', read_only=True)
