@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
+from apps.payment.models import Payment
+from apps.payment.serializers import PaymentSerializer
 from apps.product.models import Product
 from apps.product.serializers import ProductSerializer
 from apps.purchase.models import PurchaseProduct, Provider, Purchase
@@ -74,6 +76,13 @@ class PurchaseSerializer(serializers.ModelSerializer):
             purchase_product.save()
 
         return purchase
+    
+
+class PurchaseInfoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Purchase
+        fields = ['id', 'to_consignment', 'invoice_number', 'total', 'created', 'time']
 
 
 class ConsignmentSerializer(serializers.ModelSerializer):
@@ -82,3 +91,16 @@ class ConsignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = ('id', 'provider', 'total', 'paid', 'left', 'comment', 'created', 'time')
+
+
+class ProviderDetailSerializer(serializers.ModelSerializer):
+    purchases = PurchaseInfoSerializer(many=True)
+    payments = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Provider
+        fields = ['name', 'inn', 'contract_number', 'purchases', 'payments']
+
+    def get_payments(self, provider):
+        payments = Payment.objects.filter(purchase__provider=provider)
+        return PaymentSerializer(payments, many=True).data

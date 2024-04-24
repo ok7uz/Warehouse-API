@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
@@ -6,7 +7,7 @@ from rest_framework.views import APIView
 
 from apps.purchase.filters import ProviderFilter
 from apps.purchase.models import Provider, Purchase
-from apps.purchase.serializers import ProviderSerializer, ConsignmentSerializer, PurchaseSerializer
+from apps.purchase.serializers import ProviderDetailSerializer, ProviderSerializer, ConsignmentSerializer, PurchaseSerializer
 
 
 class ProviderListView(APIView):
@@ -37,6 +38,18 @@ class ProviderListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ProviderDetailView(APIView):
+    @extend_schema(
+        responses={200: ProviderDetailSerializer},
+        tags=['Purchase']
+    )
+    def get(self, request, provider_id):
+        provider = get_object_or_404(Provider, id=provider_id)
+        serializer = ProviderDetailSerializer(provider, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class PurchaseListView(APIView):

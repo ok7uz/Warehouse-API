@@ -6,11 +6,11 @@ from apps.purchase.models import Purchase
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    purchase_id = serializers.UUIDField(source='purchase.id')
+    purchase_id = serializers.UUIDField(source='purchase.id', read_only=True)
 
     class Meta:
         model = Payment
-        fields = ('id', 'purchase_id', 'type', 'amount')
+        fields = ('id', 'purchase_id', 'type', 'amount', 'created')
 
     def create(self, validated_data):
         purchase = get_object_or_404(Purchase, id=validated_data.pop('purchase')['id'])
