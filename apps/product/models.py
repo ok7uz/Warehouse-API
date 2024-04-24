@@ -29,7 +29,7 @@ class Product(models.Model):
     
 
 class WarehouseProduct(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(_('quantity'), default=0, blank=False)
     provider = models.ForeignKey('Provider', on_delete=models.CASCADE)
 
