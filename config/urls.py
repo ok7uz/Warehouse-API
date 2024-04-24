@@ -6,6 +6,7 @@ from django.urls import include, path
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from apps import payment
 
 urlpatterns = [
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
@@ -13,8 +14,12 @@ urlpatterns = [
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     path('admin/', admin.site.urls),
-    path('', include('apps.product.urls')),
-    path('', include('apps.user.urls')),
+
+    path('product/', include('apps.product.urls')),
+    path('payment/', include('apps.payment.urls')),
+    path('purchase/', include('apps.purchase.urls')),
+    path('warehouse/', include('apps.warehouse.urls')),
+    path('user/', include('apps.user.urls')),
 ]
 
 if settings.DEBUG:

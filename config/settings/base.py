@@ -12,7 +12,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 LOCAL_APPS = [
     'apps.user.apps.UserConfig',
-    'apps.product.apps.ProductConfig'
+    'apps.product.apps.ProductConfig',
+    'apps.payment.apps.PaymentConfig',
+    'apps.warehouse.apps.WarehouseConfig',
+    'apps.purchase.apps.PurchaseConfig',
 ]
 
 THIRD_PARTY_APPS = [
