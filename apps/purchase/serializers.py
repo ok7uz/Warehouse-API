@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
+from drf_spectacular.utils import extend_schema_field
 
 from apps.payment.models import Payment
 from apps.payment.serializers import PaymentSerializer
@@ -101,6 +102,7 @@ class ProviderDetailSerializer(serializers.ModelSerializer):
         model = Provider
         fields = ['name', 'inn', 'contract_number', 'purchases', 'payments']
 
+    @extend_schema_field(PaymentSerializer(many=True))
     def get_payments(self, provider):
         payments = Payment.objects.filter(purchase__provider=provider)
         return PaymentSerializer(payments, many=True).data
