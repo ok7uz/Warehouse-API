@@ -61,7 +61,7 @@ class Purchase(models.Model):
     created = models.CharField(max_length=256, verbose_name=_('created time'))
     time = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=256, null=True)
-    invoice_number = models.PositiveIntegerField(max_length=256, null=True)
+    invoice_number = models.PositiveIntegerField()
 
     total = models.FloatField()
     paid = models.FloatField(default=0)
