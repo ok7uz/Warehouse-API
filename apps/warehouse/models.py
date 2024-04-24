@@ -10,8 +10,10 @@ class WarehouseProduct(models.Model):
     quantity = models.IntegerField(_('quantity'), default=0, blank=False)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
 
-    purchasing_amount = models.PositiveIntegerField(_('purchasing amount'))
-    selling_amount = models.PositiveIntegerField(_('selling amount'))
+    purchasing_amount = models.FloatField(_('purchasing amount'))
+    selling_amount = models.FloatField(_('selling amount'))
+    discount = models.FloatField()
+    discount_price = models.FloatField()
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
     modified = models.DateTimeField(_('modified time'), auto_now=True)

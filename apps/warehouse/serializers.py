@@ -17,8 +17,8 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WarehouseProduct
-        fields = ['product_id', 'product', 'quantity', 'provider', 'purchasing_amount',
-                  'selling_amount', 'created', 'modified']
+        fields = ['product_id', 'product', 'quantity', 'purchasing_amount', 'selling_amount',
+                  'discount', 'discount_price', 'created', 'modified', 'provider']
 
     def validate(self, attrs):
         product_id = attrs['product']['id']

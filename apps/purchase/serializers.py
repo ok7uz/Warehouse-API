@@ -28,13 +28,21 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         product = get_object_or_404(Product, id=validated_data.pop('product')['id'])
-        quantity = validated_data.pop('quantity', None)
+        quantity = validated_data.get('quantity', None)
         purchase = self.context['purchase']
         provider_id = purchase.provider_id
+        discount = validated_data.get('discount', None)
+        discount_price = validated_data.get('discount_price', None)
 
-        warehouse_product = WarehouseProduct.objects.filter(product=product, provider_id=provider_id)
+        warehouse_product = WarehouseProduct.objects.filter(product=product, provider_id=provider_id, discount=discount)
+
         if not warehouse_product.exists():
-            warehouse_product = WarehouseProduct(product=product, provider_id=provider_id, quantity=0)
+            warehouse_product = WarehouseProduct(
+                product=product,
+                provider_id=provider_id,
+                quantity=0,
+                discount=discount_price,
+            )
         else:
             warehouse_product = warehouse_product.first()
 
