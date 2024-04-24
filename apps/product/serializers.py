@@ -61,7 +61,9 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
         fields = ['product_id', 'product', 'quantity', 'discount', 'discount_price', 'total']
 
     def create(self, validated_data):
+        print(1)
         product = get_object_or_404(Product, id=validated_data.pop('product')['id'])
+        print(2)
         quantity = validated_data.pop('quantity', None)   
         purchase = self.context['purchase']
         provider_id = purchase.provider_id
@@ -86,22 +88,25 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
+    purchase_id = serializers.UUIDField(source='id')
     provider_id = serializers.IntegerField(source='provider.id', write_only=True)
     provider = ProviderSerializer(read_only=True)
     products = PurchaseProductSerializer(many=True)
 
     class Meta:
         model = Purchase
-        fields = ['id', 'products', 'provider_id', 'provider', 'invoice_number', 'total', 'created']
+        fields = ['purchase_id', 'to_consignment', 'products', 'provider_id', 'provider',
+                  'invoice_number', 'total', 'created', 'time']
 
     def create(self, validated_data):
         products = validated_data.pop('products', None)
         provider_id = validated_data.pop('provider')['id']
-        validated_data['provider_id'] = provider_id
-
-        purchase = Purchase.objects.create(**validated_data)        
+        provider = get_object_or_404(Provider, id=provider_id)
+        validated_data['provider'] = provider
+        purchase = Purchase.objects.create(**validated_data)
 
         for product in products:
+            print(6)
             product_id = product['product']['id']
             product['product_id'] = product_id
             purchase_product = PurchaseProductSerializer(data=product, context={'purchase': purchase})
@@ -116,11 +121,11 @@ class ConsignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ('id', 'created', 'provider', 'total', 'paid', 'left', 'comment')       
+        fields = ('id', 'provider', 'total', 'paid', 'left', 'comment', 'created', 'time')
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    purchase_id = serializers.IntegerField(source='purchase.id')
+    purchase_id = serializers.UUIDField(source='purchase.id')
 
     class Meta:
         model = Payment
