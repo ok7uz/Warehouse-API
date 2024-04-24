@@ -6,7 +6,7 @@ from apps.purchase.models import Purchase
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    purchase_id = serializers.UUIDField(source='purchase.id', read_only=True)
+    purchase_id = serializers.UUIDField(source='purchase.id')
 
     class Meta:
         model = Payment
