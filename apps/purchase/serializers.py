@@ -100,7 +100,7 @@ class ConsignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ('id', 'provider', 'total', 'paid', 'left', 'comment', 'created', 'time')
+        fields = ('id', 'provider', 'total', 'currency', 'paid', 'left', 'created', 'time')
 
 
 class PurchaseHistorySerializer(serializers.ModelSerializer):
@@ -108,7 +108,7 @@ class PurchaseHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ('id', 'provider', 'total', 'created', 'time')
+        fields = ('id', 'provider', 'total', 'currency', 'created', 'time')
 
 
 class ProviderDetailSerializer(serializers.ModelSerializer):

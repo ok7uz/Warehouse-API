@@ -78,7 +78,7 @@ class ConsignmentListView(APIView):
         ]
     )
     def get(self, request):
-        queryset = Purchase.objects.filter(to_consignment=True)
+        queryset = Purchase.objects.filter(to_consignment=True).order_by('-created')
         purchase_filter = PurchaseFilter(request.GET, queryset=queryset)
         queryset = purchase_filter.qs if purchase_filter.is_valid() else queryset.none()
         serializer = ConsignmentSerializer(queryset, context={'request': request}, many=True)
@@ -95,7 +95,7 @@ class PurchaseHistoryView(APIView):
         ]
     )
     def get(self, request):
-        queryset = Purchase.objects.filter(to_consignment=False)
+        queryset = Purchase.objects.filter(to_consignment=False).order_by('-created')
         purchase_filter = PurchaseFilter(request.GET, queryset=queryset)
         queryset = purchase_filter.qs if purchase_filter.is_valid() else queryset.none()
         serializer = PurchaseHistorySerializer(queryset, context={'request': request}, many=True)
