@@ -48,7 +48,9 @@ class WarehouseProductListView(APIView, PageNumberPagination):
         tags=['Warehouse Product']
     )
     def post(self, request):
+        print('9999')
         serializer = WarehouseProductSerializer(data=request.data)
+        print('0000')
 
         if serializer.is_valid(raise_exception=True):
             serializer.save()

@@ -34,6 +34,7 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
         selling_amount = product.selling_price * quantity
         discount = validated_data.get('discount', 0)
         discount_price = validated_data.get('discount_price', 0)
+        print(discount_price)
 
         return WarehouseProduct.objects.create(
             product=product,
