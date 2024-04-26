@@ -23,6 +23,7 @@ class Purchase(models.Model):
     comment = models.CharField(max_length=256, null=True)
     invoice_number = models.PositiveIntegerField()
     to_consignment = models.BooleanField()
+    currency = models.CharField(max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')], verbose_name=_('currency'))
 
     total = models.FloatField()
     paid = models.FloatField(default=0)

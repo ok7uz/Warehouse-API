@@ -69,7 +69,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
         fields = ['purchase_id', 'to_consignment', 'products', 'provider_id', 'provider',
-                  'invoice_number', 'total', 'created', 'time']
+                  'invoice_number', 'currency', 'total', 'created', 'time']
 
     def create(self, validated_data):
         products = validated_data.pop('products', None)
