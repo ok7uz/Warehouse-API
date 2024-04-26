@@ -103,6 +103,14 @@ class ConsignmentSerializer(serializers.ModelSerializer):
         fields = ('id', 'provider', 'total', 'paid', 'left', 'comment', 'created', 'time')
 
 
+class PurchaseHistorySerializer(serializers.ModelSerializer):
+    provider = serializers.CharField(source='provider.name', read_only=True)
+
+    class Meta:
+        model = Purchase
+        fields = ('id', 'provider', 'total', 'created', 'time')
+
+
 class ProviderDetailSerializer(serializers.ModelSerializer):
     purchases = PurchaseInfoSerializer(many=True)
     payments = serializers.SerializerMethodField(read_only=True)

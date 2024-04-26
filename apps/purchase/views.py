@@ -5,9 +5,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.purchase.filters import ProviderFilter
+from apps.purchase.filters import ProviderFilter, PurchaseFilter
 from apps.purchase.models import Provider, Purchase
-from apps.purchase.serializers import ProviderDetailSerializer, ProviderSerializer, ConsignmentSerializer, PurchaseSerializer
+from apps.purchase.serializers import ProviderDetailSerializer, ProviderSerializer, ConsignmentSerializer, \
+    PurchaseSerializer, PurchaseHistorySerializer
 
 
 class ProviderListView(APIView):
@@ -51,7 +52,6 @@ class ProviderDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
 class PurchaseListView(APIView):
 
     @extend_schema(
@@ -72,10 +72,31 @@ class ConsignmentListView(APIView):
 
     @extend_schema(
         responses={200: ConsignmentSerializer(many=True)},
-        tags=['Purchase']
+        tags=['Purchase'],
+        parameters=[
+            OpenApiParameter('provider', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
+        ]
     )
     def get(self, request):
-        queryset = Purchase.objects.all()
+        queryset = Purchase.objects.filter(to_consignment=True)
+        purchase_filter = PurchaseFilter(request.GET, queryset=queryset)
+        queryset = purchase_filter.qs if purchase_filter.is_valid() else queryset.none()
         serializer = ConsignmentSerializer(queryset, context={'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class PurchaseHistoryView(APIView):
+
+    @extend_schema(
+        responses={200: PurchaseHistorySerializer(many=True)},
+        tags=['Purchase'],
+        parameters=[
+            OpenApiParameter('provider', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
+        ]
+    )
+    def get(self, request):
+        queryset = Purchase.objects.filter(to_consignment=False)
+        purchase_filter = PurchaseFilter(request.GET, queryset=queryset)
+        queryset = purchase_filter.qs if purchase_filter.is_valid() else queryset.none()
+        serializer = PurchaseHistorySerializer(queryset, context={'request': request}, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
