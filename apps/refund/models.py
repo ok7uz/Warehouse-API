@@ -5,8 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from apps.purchase.models import Provider
 from apps.warehouse.models import WarehouseProduct
 
+
 class Refund(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='refunds')
     created = models.CharField(max_length=256, verbose_name=_('created time'))
     time = models.DateTimeField(auto_now_add=True)
@@ -26,12 +27,10 @@ class Refund(models.Model):
 
 class RefundProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    refund = models.ForeignKey(Refund, on_delete=models.CASCADE)
-    product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
-    quantity = models.IntegerField(_('quantity'), default=0, blank=False)
+    refund = models.ForeignKey(Refund, on_delete=models.CASCADE, related_name='products')
+    warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
 
-    discount = models.IntegerField()
-    discount_price = models.FloatField()
+    quantity = models.IntegerField(_('quantity'), default=0, blank=False)
     total = models.FloatField()
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)

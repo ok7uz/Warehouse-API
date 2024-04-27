@@ -10,20 +10,18 @@ from apps.warehouse.serializers import WarehouseProductSerializer
 
 class RefundProductSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id', write_only=True)
-    product = WarehouseProductSerializer(read_only=True)
+    warehouse_product = WarehouseProductSerializer(read_only=True)
     quantity = serializers.IntegerField(required=True)
 
     class Meta:
         model = RefundProduct
-        fields = ['product_id', 'product', 'quantity', 'discount', 'discount_price', 'total']
+        fields = ['product_id', 'warehouse_product', 'quantity', 'total']
 
     def create(self, validated_data):
         warehouse_product = get_object_or_404(WarehouseProduct, id=validated_data.pop('product')['id'])
         quantity = validated_data.pop('quantity', None)
         refund = self.context['refund']
         # provider_id = refund.provider_id
-        # discount = validated_data.get('discount', None)
-        # discount_price = validated_data.get('discount_price', None)
 
         warehouse_product.quantity -= quantity
         warehouse_product.purchasing_amount = warehouse_product.product.purchasing_price * warehouse_product.quantity
@@ -31,15 +29,11 @@ class RefundProductSerializer(serializers.ModelSerializer):
         warehouse_product.save()
 
         return RefundProduct.objects.create(
-            product=warehouse_product,
+            warehouse_product=warehouse_product,
             refund=refund,
             quantity=quantity,
             **validated_data
         )
-
-    class Meta:
-        model = RefundProduct
-        fields = '__all__'
     
 
 class RefundSerializer(serializers.ModelSerializer):

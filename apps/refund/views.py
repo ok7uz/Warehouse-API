@@ -18,19 +18,16 @@ class RefundListView(APIView):
     )
     def get(self, request):
         queryset = Refund.objects.all()
-        serializer = self.serializer_class(queryset)
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-class RefundListView(APIView):
-    permission_classes = (AllowAny,)
-    serializer_class = RefundSerializer
 
     @extend_schema(
         tags=['Refund'],
-        responses={200: serializer_class(many=True)}
+        request=serializer_class,
+        responses={200: serializer_class}
     )
-    def get(self, request):
-        queryset = Refund.objects.all()
-        serializer = self.serializer_class(queryset)
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
