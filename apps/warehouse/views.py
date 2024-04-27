@@ -26,6 +26,7 @@ class WarehouseProductListView(APIView, PageNumberPagination):
             OpenApiParameter('product__currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
             OpenApiParameter('name', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
             OpenApiParameter('barcode', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
+            OpenApiParameter('provider_id', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT32),
         ],
         responses={200: WarehouseProductSerializer(many=True)},
         tags=['Warehouse Product']
