@@ -27,7 +27,9 @@ class ProductListView(APIView, PageNumberPagination):
             OpenApiParameter('page_size', location=OpenApiParameter.QUERY, type=OpenApiTypes.INT),
             OpenApiParameter('search', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR,
                              description='via name, barcode'),
-            OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR)
+            OpenApiParameter('currency', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
+            OpenApiParameter('name', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
+            OpenApiParameter('barcode', location=OpenApiParameter.QUERY, type=OpenApiTypes.STR),
         ],
         responses={200: serializer_class(many=True)},
         tags=['Product']
