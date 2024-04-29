@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAdminUser
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
@@ -15,7 +16,7 @@ from apps.product.serializers import ProductSerializer
 
 
 class ProductListView(APIView, PageNumberPagination):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminUser,)
     serializer_class = ProductSerializer
     page_size = 25
     page_size_query_param = 'page_size'
@@ -67,7 +68,7 @@ class ProductListView(APIView, PageNumberPagination):
     
 
 class ProductView(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminUser,)
     serializer_class = ProductSerializer
 
     @extend_schema(responses={200: serializer_class},

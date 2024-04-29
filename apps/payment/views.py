@@ -2,11 +2,13 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 from apps.payment.serializers import PaymentSerializer
 
 
 class PaymentListView(APIView):
+    permission_classes = (IsAdminUser,)
 
     @extend_schema(
         request=PaymentSerializer,
