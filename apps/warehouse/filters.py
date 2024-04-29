@@ -6,9 +6,9 @@ from apps.warehouse.models import WarehouseProduct
 class WarehouseProductFilter(filters.FilterSet):
     name = filters.CharFilter(field_name='product__name', lookup_expr='icontains')
     barcode = filters.NumberFilter(field_name='product__barcode', lookup_expr='icontains')
+    currency = filters.CharFilter(field_name='product__currency', lookup_expr='exact')
+    provider_id = filters.CharFilter(field_name='provider__id', lookup_expr='exact')
 
     class Meta:
         model = WarehouseProduct
-        fields = {
-            'product__currency': ['exact'],
-        }
+        fields = ['name', 'barcode', 'currency', 'provider_id']

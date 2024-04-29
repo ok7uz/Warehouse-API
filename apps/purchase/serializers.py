@@ -41,7 +41,7 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
                 product=product,
                 provider_id=provider_id,
                 quantity=0,
-                discount=discount_price,
+                discount=discount,
                 discount_price=discount_price
             )
         else:
