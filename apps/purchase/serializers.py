@@ -7,6 +7,8 @@ from apps.payment.serializers import PaymentSerializer
 from apps.product.models import Product
 from apps.product.serializers import ProductSerializer
 from apps.purchase.models import PurchaseProduct, Provider, Purchase
+from apps.store.models import Store
+from apps.store.serializers import StoreSerializer
 from apps.warehouse.models import WarehouseProduct
 
 
@@ -62,20 +64,28 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
 
 class PurchaseSerializer(serializers.ModelSerializer):
     purchase_id = serializers.UUIDField(source='id')
+    store_id = serializers.UUIDField(source='store.id', write_only=True)
+    store = StoreSerializer(read_only=True)
     provider_id = serializers.IntegerField(source='provider.id', write_only=True)
     provider = ProviderSerializer(read_only=True)
     products = PurchaseProductSerializer(many=True)
 
     class Meta:
         model = Purchase
-        fields = ['purchase_id', 'to_consignment', 'products', 'provider_id', 'provider',
-                  'invoice_number', 'currency', 'total', 'created', 'time']
+        fields = ['purchase_id', 'store_id', 'store', 'to_consignment', 'products', 'provider_id',
+                  'provider', 'invoice_number', 'currency', 'total', 'created', 'time']
 
     def create(self, validated_data):
         products = validated_data.pop('products', None)
+        
+        store_id = validated_data.pop('store')['id']
+        store = get_object_or_404(Store, id=store_id)
+        validated_data['store'] = store
+
         provider_id = validated_data.pop('provider')['id']
         provider = get_object_or_404(Provider, id=provider_id)
         validated_data['provider'] = provider
+
         purchase = Purchase.objects.create(**validated_data)
 
         for product in products:

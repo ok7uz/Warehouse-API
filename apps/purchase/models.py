@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.product.models import Product
+from apps.store.models import Store
 
 
 class Provider(models.Model):
@@ -17,6 +18,7 @@ class Provider(models.Model):
 
 class Purchase(models.Model):
     id = models.UUIDField(primary_key=True)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='purchases')
     created = models.CharField(max_length=256, verbose_name=_('created time'))
     time = models.DateTimeField(auto_now_add=True)

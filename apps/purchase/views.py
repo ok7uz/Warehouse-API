@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny
 
 from apps.purchase.filters import ProviderFilter, PurchaseFilter
 from apps.purchase.models import Provider, Purchase
@@ -13,7 +13,7 @@ from apps.purchase.serializers import ProviderDetailSerializer, ProviderSerializ
 
 
 class ProviderListView(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
     @extend_schema(
         parameters=[
@@ -45,7 +45,7 @@ class ProviderListView(APIView):
     
 
 class ProviderDetailView(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
     @extend_schema(
         responses={200: ProviderDetailSerializer},
@@ -58,7 +58,7 @@ class ProviderDetailView(APIView):
 
 
 class PurchaseListView(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
     @extend_schema(
         request=PurchaseSerializer,
@@ -75,7 +75,7 @@ class PurchaseListView(APIView):
 
 
 class ConsignmentListView(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
     @extend_schema(
         responses={200: ConsignmentSerializer(many=True)},
@@ -93,7 +93,7 @@ class ConsignmentListView(APIView):
 
 
 class PurchaseHistoryView(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
 
     @extend_schema(
         responses={200: PurchaseHistorySerializer(many=True)},

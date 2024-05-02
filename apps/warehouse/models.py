@@ -1,11 +1,14 @@
+import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.product.models import Product
 from apps.purchase.models import Provider
+from apps.store.models import Store
 
 
 class WarehouseProduct(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(_('quantity'), default=0, blank=False)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
@@ -26,3 +29,4 @@ class WarehouseProduct(models.Model):
 
     def __str__(self):
         return self.product.name
+

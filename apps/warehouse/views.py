@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny
 
 from apps.warehouse.filters import WarehouseProductFilter
 from apps.warehouse.models import WarehouseProduct
@@ -13,7 +13,7 @@ from apps.warehouse.serializers import WarehouseProductSerializer
 
 
 class WarehouseProductListView(APIView, PageNumberPagination):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (AllowAny,)
     serializer_class = WarehouseProductSerializer
     page_size = 25
     page_size_query_param = 'page_size'
