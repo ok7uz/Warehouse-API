@@ -22,44 +22,35 @@ class ProviderSerializer(serializers.ModelSerializer):
 class PurchaseProductSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id', write_only=True)
     product = ProductSerializer(read_only=True)
-    quantity = serializers.IntegerField(required=True)
+    quantity = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = PurchaseProduct
-        fields = ['product_id', 'product', 'quantity', 'discount', 'discount_price', 'total']
+        fields = ['product_id', 'product', 'quantity']
 
     def create(self, validated_data):
         product = get_object_or_404(Product, id=validated_data.pop('product')['id'])
         quantity = validated_data.pop('quantity', None)
         purchase = self.context['purchase']
         provider_id = purchase.provider_id
-        discount = validated_data.get('discount', None)
-        discount_price = validated_data.get('discount_price', None)
+        store = self.context['store']
 
-        warehouse_product = WarehouseProduct.objects.filter(product=product, provider_id=provider_id, discount=discount)
-
-        if not warehouse_product.exists():
-            warehouse_product = WarehouseProduct(
+        for _ in range(quantity):
+            warehouse_product = WarehouseProduct.objects.create(
                 product=product,
                 provider_id=provider_id,
-                quantity=0,
-                discount=discount,
-                discount_price=discount_price
+                store=store
+                )
+            
+            PurchaseProduct.objects.create(
+                product=product,
+                purchase=purchase,
+                barcode=warehouse_product.barcode,
+                id_code=warehouse_product.id_code,
+                **validated_data
             )
-        else:
-            warehouse_product = warehouse_product.first()
-
-        warehouse_product.quantity += quantity
-        warehouse_product.purchasing_amount = warehouse_product.product.purchasing_price * warehouse_product.quantity
-        warehouse_product.selling_amount = warehouse_product.product.selling_price * warehouse_product.quantity
-        warehouse_product.save()
-
-        return PurchaseProduct.objects.create(
-            product=product,
-            purchase=purchase,
-            quantity=quantity,
-            **validated_data
-        )
+        
+        return PurchaseProduct.objects.filter(product=product, purchase=purchase)
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
@@ -91,7 +82,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
         for product in products:
             product_id = product['product']['id']
             product['product_id'] = product_id
-            purchase_product = PurchaseProductSerializer(data=product, context={'purchase': purchase})
+            purchase_product = PurchaseProductSerializer(data=product, context={'purchase': purchase, 'store': store})
             purchase_product.is_valid(raise_exception=True)
             purchase_product.save()
 

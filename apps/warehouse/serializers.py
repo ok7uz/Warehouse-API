@@ -11,14 +11,11 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id', write_only=True)
     product = ProductSerializer(read_only=True)
     provider = ProviderSerializer(read_only=True)
-    quantity = serializers.IntegerField(required=True)
-    purchasing_amount = serializers.FloatField(read_only=True)
-    selling_amount = serializers.FloatField(read_only=True)
 
     class Meta:
         model = WarehouseProduct
-        fields = ['id', 'product_id', 'product', 'quantity', 'purchasing_amount', 'selling_amount',
-                  'discount', 'discount_price', 'created', 'modified', 'provider']
+        fields = ['id', 'product_id', 'product', 'barcode', 'id_code',
+                  'created', 'modified', 'provider']
 
     def validate(self, attrs):
         product_id = attrs['product']['id']

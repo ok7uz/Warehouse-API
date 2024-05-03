@@ -12,7 +12,7 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 @admin.register(PurchaseProduct)
 class PurchaseProductAdmin(admin.ModelAdmin):
-    list_display = ['product', 'purchase', 'quantity', 'created']
+    list_display = ['product', 'purchase',  'created']
     readonly_fields = ['created', 'modified']
     search_fields = ['product']
     ordering = ['-created']

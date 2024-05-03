@@ -22,7 +22,6 @@ class Purchase(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='purchases')
     created = models.CharField(max_length=256, verbose_name=_('created time'))
     time = models.DateTimeField(auto_now_add=True)
-    comment = models.CharField(max_length=256, null=True)
     invoice_number = models.PositiveIntegerField()
     to_consignment = models.BooleanField()
     currency = models.CharField(max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')], verbose_name=_('currency'))
@@ -49,11 +48,9 @@ class PurchaseProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='products')
-    quantity = models.IntegerField(_('quantity'), default=0, blank=False)
 
-    discount = models.IntegerField()
-    discount_price = models.FloatField()
-    total = models.FloatField()
+    barcode = models.CharField(max_length=16, blank=True)
+    id_code = models.CharField(max_length=16, blank=True)
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
     modified = models.DateTimeField(_('modified time'), auto_now=True)
