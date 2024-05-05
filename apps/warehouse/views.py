@@ -12,12 +12,9 @@ from apps.warehouse.models import WarehouseProduct
 from apps.warehouse.serializers import WarehouseProductSerializer
 
 
-class WarehouseProductListView(APIView, PageNumberPagination):
+class WarehouseProductListView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = WarehouseProductSerializer
-    page_size = 25
-    page_size_query_param = 'page_size'
-    max_page_size = 100
 
     @extend_schema(
         parameters=[
@@ -41,9 +38,8 @@ class WarehouseProductListView(APIView, PageNumberPagination):
 
         product_filter = WarehouseProductFilter(request.GET, queryset=products)
         queryset = product_filter.qs if product_filter.is_valid() else products.none()
-        page = self.paginate_queryset(queryset, request)
-        serializer = self.serializer_class(page, context={'request': request}, many=True)
-        return self.get_paginated_response(serializer.data)
+        serializer =  WarehouseProductSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         request=WarehouseProductSerializer,

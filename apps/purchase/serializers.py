@@ -10,18 +10,14 @@ from apps.purchase.models import PurchaseProduct, Provider, Purchase
 from apps.store.models import Store
 from apps.store.serializers import StoreSerializer
 from apps.warehouse.models import WarehouseProduct
+from apps.warehouse.serializers import ProviderSerializer, WarehouseProductSerializer
 
 
-class ProviderSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Provider
-        fields = '__all__'
 
 
 class PurchaseProductSerializer(serializers.ModelSerializer):
-    product_id = serializers.IntegerField(source='product.id', write_only=True)
-    product = ProductSerializer(read_only=True)
+    product_id = serializers.IntegerField(write_only=True)
+    product = WarehouseProductSerializer(read_only=True)
     quantity = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -29,7 +25,7 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
         fields = ['product_id', 'product', 'quantity']
 
     def create(self, validated_data):
-        product = get_object_or_404(Product, id=validated_data.pop('product')['id'])
+        product = get_object_or_404(Product, id=validated_data.pop('product_id'))
         quantity = validated_data.pop('quantity', None)
         purchase = self.context['purchase']
         provider_id = purchase.provider_id
@@ -43,14 +39,12 @@ class PurchaseProductSerializer(serializers.ModelSerializer):
                 )
             
             PurchaseProduct.objects.create(
-                product=product,
+                product=warehouse_product,
                 purchase=purchase,
-                barcode=warehouse_product.barcode,
-                id_code=warehouse_product.id_code,
                 **validated_data
             )
         
-        return PurchaseProduct.objects.filter(product=product, purchase=purchase)
+        return PurchaseProduct.objects.filter(product__product=product, purchase=purchase)
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
@@ -80,7 +74,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
         purchase = Purchase.objects.create(**validated_data)
 
         for product in products:
-            product_id = product['product']['id']
+            product_id = product['product_id']
             product['product_id'] = product_id
             purchase_product = PurchaseProductSerializer(data=product, context={'purchase': purchase, 'store': store})
             purchase_product.is_valid(raise_exception=True)

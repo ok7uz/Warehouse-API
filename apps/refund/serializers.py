@@ -11,27 +11,21 @@ from apps.warehouse.serializers import WarehouseProductSerializer
 class RefundProductSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(source='product.id', write_only=True)
     warehouse_product = WarehouseProductSerializer(read_only=True)
-    quantity = serializers.IntegerField(required=True)
 
     class Meta:
         model = RefundProduct
-        fields = ['product_id', 'warehouse_product', 'quantity', 'total']
+        fields = ['product_id', 'warehouse_product', 'total']
 
     def create(self, validated_data):
         warehouse_product = get_object_or_404(WarehouseProduct, id=validated_data.pop('product')['id'])
-        quantity = validated_data.pop('quantity', None)
         refund = self.context['refund']
-        # provider_id = refund.provider_id
 
-        warehouse_product.quantity -= quantity
-        warehouse_product.purchasing_amount = warehouse_product.product.purchasing_price * warehouse_product.quantity
-        warehouse_product.selling_amount = warehouse_product.product.selling_price * warehouse_product.quantity
+        warehouse_product.is_avaiable = False
         warehouse_product.save()
 
         return RefundProduct.objects.create(
-            warehouse_product=warehouse_product,
+            product=warehouse_product,
             refund=refund,
-            quantity=quantity,
             **validated_data
         )
     
@@ -51,6 +45,9 @@ class RefundSerializer(serializers.ModelSerializer):
         provider = get_object_or_404(Provider, id=provider_id)
         validated_data['provider'] = provider
         refund = Refund.objects.create(**validated_data)
+        amount = validated_data.get('amount')
+        product_one = get_object_or_404(WarehouseProduct, id=products[0]['product']['id'])
+        purchase = product_one.purchase_product.purchase
 
         for product in products:
             product_id = product['product']['id']
@@ -58,5 +55,8 @@ class RefundSerializer(serializers.ModelSerializer):
             refund_product = RefundProductSerializer(data=product, context={'refund': refund})
             refund_product.is_valid(raise_exception=True)
             refund_product.save()
+
+        purchase.total -= amount
+        purchase.save()
 
         return refund

@@ -3,8 +3,16 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.product.models import Product
-from apps.purchase.models import Provider
 from apps.store.models import Store
+
+
+class Provider(models.Model):
+    name = models.CharField(max_length=128)
+    inn = models.PositiveIntegerField()
+    contract_number = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
 
 
 class WarehouseProduct(models.Model):

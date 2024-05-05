@@ -28,9 +28,8 @@ class Refund(models.Model):
 class RefundProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     refund = models.ForeignKey(Refund, on_delete=models.CASCADE, related_name='products')
-    warehouse_product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
+    product = models.ForeignKey(WarehouseProduct, on_delete=models.CASCADE)
 
-    quantity = models.IntegerField(_('quantity'), default=0, blank=False)
     total = models.FloatField()
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)

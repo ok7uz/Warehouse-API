@@ -3,17 +3,9 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from apps.product.models import Product
 from apps.store.models import Store
+from apps.warehouse.models import Provider, WarehouseProduct
 
-
-class Provider(models.Model):
-    name = models.CharField(max_length=128)
-    inn = models.PositiveIntegerField()
-    contract_number = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.name
 
 
 class Purchase(models.Model):
@@ -46,11 +38,8 @@ class Purchase(models.Model):
 
 class PurchaseProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(WarehouseProduct, related_name='purchase_product', on_delete=models.CASCADE)
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='products')
-
-    barcode = models.CharField(max_length=16, blank=True)
-    id_code = models.CharField(max_length=16, blank=True)
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
     modified = models.DateTimeField(_('modified time'), auto_now=True)
