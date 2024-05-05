@@ -1,10 +1,13 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from apps.store.models import Store
+
 
 class Product(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))
     currency = models.CharField(max_length=3, choices=[('UZS', 'UZS'), ('USD', 'USD')], verbose_name=_('currency'))
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='products')
 
     purchasing_price = models.FloatField(verbose_name=_('purchasing price'))
     markup_percentage = models.FloatField(verbose_name=_('markup percentage'))
