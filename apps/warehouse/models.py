@@ -23,6 +23,7 @@ class WarehouseProduct(models.Model):
     barcode = models.CharField(max_length=16, blank=True)
     id_code = models.CharField(max_length=16, blank=True)
 
+    is_avaiable = models.BooleanField(default=True)
     created = models.DateTimeField(_('created time'), auto_now_add=True)
     modified = models.DateTimeField(_('modified time'), auto_now=True)
 

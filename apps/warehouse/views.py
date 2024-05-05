@@ -31,7 +31,7 @@ class WarehouseProductListView(APIView):
         tags=['Warehouse Product']
     )
     def get(self, request):
-        products = WarehouseProduct.objects.all()
+        products = WarehouseProduct.objects.filter(is_avaiable=True)
         search = request.query_params.get('search', None)
         products = products.filter(
             Q(product__name__icontains=search) | Q(product__barcode__icontains=search)) if search else products
