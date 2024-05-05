@@ -24,6 +24,7 @@ LOCAL_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_spectacular',
+    'drf_spectacular_sidecar',
     'corsheaders',
     'django_filters',
 ]
@@ -151,7 +152,13 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': '...',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+    },
+    'SWAGGER_UI_DIST': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest',
+    'SWAGGER_UI_FAVICON_HREF': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png',
+    'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@latest',
+    'REDOC_DIST': 'SIDECAR',
 }
 
 CSRF_TRUSTED_ORIGINS = ['https://*.replit.dev', 'https://*.127.0.0.1']

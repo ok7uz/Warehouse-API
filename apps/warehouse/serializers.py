@@ -18,11 +18,13 @@ class WarehouseProductSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
     provider_name = serializers.CharField(source='provider.name', read_only=True)
     provider_id = serializers.IntegerField(source='provider.id', read_only=True)
+    product = ProductSerializer(read_only=True)
+    provider = ProviderSerializer(read_only=True)
 
     class Meta:
         model = WarehouseProduct
-        fields = ['id', 'product_id', 'product_name', 'barcode', 'id_code',
-                  'created', 'modified', 'provider_id', 'provider_name']
+        fields = ['id', 'product_id', 'product_name', 'product', 'barcode', 'id_code',
+                  'created', 'modified', 'provider_id', 'provider_name', 'provider']
 
     def validate(self, attrs):
         product_id = attrs['product']['id']
