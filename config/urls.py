@@ -21,7 +21,8 @@ urlpatterns = [
     path('payment/', include('apps.payment.urls')),
     path('purchase/', include('apps.purchase.urls')),
     path('warehouse/', include('apps.warehouse.urls')),
-    path('refund/', include('apps.refund.urls'))
+    path('refund/', include('apps.refund.urls')),
+    path('cashs/', include('apps.cash.urls'))
 ]
 
 if settings.DEBUG:

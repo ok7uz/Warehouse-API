@@ -17,7 +17,8 @@ LOCAL_APPS = [
     'apps.warehouse.apps.WarehouseConfig',
     'apps.purchase.apps.PurchaseConfig',
     'apps.refund.apps.RefundConfig',
-    'apps.store.apps.StoreConfig'
+    'apps.store.apps.StoreConfig',
+    'apps.cash.apps.CashConfig'
 ]
 
 THIRD_PARTY_APPS = [
