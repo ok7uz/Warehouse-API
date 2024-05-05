@@ -6,7 +6,7 @@ from apps.store.models import Store
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    store_id = serializers.UUIDField(source='store.id')
+    store_id = serializers.UUIDField(source='store.id', required=False)
 
     class Meta:
         model = Product
