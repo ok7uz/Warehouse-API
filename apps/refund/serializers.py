@@ -47,7 +47,7 @@ class RefundSerializer(serializers.ModelSerializer):
         refund = Refund.objects.create(**validated_data)
         amount = validated_data.get('amount')
         product_one = get_object_or_404(WarehouseProduct, id=products[0]['product']['id'])
-        purchase = product_one.purchase_product.purchase
+        purchase = product_one.purchase_products.first().purchase
 
         for product in products:
             product_id = product['product']['id']

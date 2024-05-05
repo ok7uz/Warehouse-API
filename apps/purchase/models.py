@@ -38,7 +38,7 @@ class Purchase(models.Model):
 
 class PurchaseProduct(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(WarehouseProduct, related_name='purchase_product', on_delete=models.CASCADE)
+    product = models.ForeignKey(WarehouseProduct, related_name='purchase_products', on_delete=models.CASCADE)
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='products')
 
     created = models.DateTimeField(_('created time'), auto_now_add=True)
