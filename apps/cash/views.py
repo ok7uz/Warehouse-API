@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
+from apps.cash.filters import CashierFilter, SaleFilter
 from apps.cash.models import Cash, Cashier, Sale
 from apps.cash.serializers import CashSerializer, CashierSerializer, SaleSerializer
 
@@ -17,11 +18,17 @@ class SaleList(APIView):
 
     @extend_schema(
         tags=['Sale'],
+        parameters=[
+            OpenApiParameter('cash_id', location=OpenApiParameter.QUERY, type=OpenApiTypes.UUID),
+            OpenApiParameter('cashier_id', location=OpenApiParameter.QUERY, type=OpenApiTypes.UUID),
+        ],
         responses={200: SaleSerializer(many=True)}
     )
     def get(self, request):
         sales = Sale.objects.all()
-        serailizer = SaleSerializer(sales, many=True)
+        sale_filter = SaleFilter(request.GET, queryset=sales)
+        filtered_sales = sale_filter.qs if sale_filter.is_valid() else sales.none()
+        serailizer = SaleSerializer(filtered_sales, many=True)
         return Response(serailizer.data, status=status.HTTP_200_OK)
     
     @extend_schema(
@@ -48,25 +55,6 @@ class SaleDetail(APIView):
         sale = get_object_or_404(Sale, id=sale_id)
         serializer = self.serializer_class(sale, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    @extend_schema(request=serializer_class,
-                   responses={200: serializer_class},
-                   tags=['Product'])
-    def put(self, request, sale_id):
-        sale = get_object_or_404(Sale, id=sale_id)
-        serializer = self.serializer_class(sale, data=request.data)
-
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    @extend_schema(tags=['Product'])
-    def delete(self, request, sale_id):
-        sale = get_object_or_404(Sale, id=sale_id)
-        sale.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
-
 
 
 class CashierList(APIView):
@@ -75,10 +63,15 @@ class CashierList(APIView):
 
     @extend_schema(
         tags=['Cashier'],
+        parameters=[
+            OpenApiParameter('cash_id', location=OpenApiParameter.QUERY, type=OpenApiTypes.UUID),
+        ],
         responses={200: CashierSerializer(many=True)}
     )
     def get(self, request):
         cashiers = Cashier.objects.all()
+        cashier_filter = CashierFilter(request.GET, queryset=cashiers)
+        cashiers = cashier_filter.qs if cashier_filter.is_valid() else cashiers.none()
         serailizer = CashierSerializer(cashiers, many=True)
         return Response(serailizer.data, status=status.HTTP_200_OK)
     
